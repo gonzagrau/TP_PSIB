@@ -1,0 +1,4 @@
+N1_evoked_raw_100_F1_R2 2 48000 2074112
+N1_evoked_raw_100_F1_R2.dat 32 10737.4182(0)/nV 32 0 0 0 0 ABR
+N1_evoked_raw_100_F1_R2.dat 32 0.01(0)/V 32 0 0 55040 0 OAE
+##<SPL>: 100 <Stim Freq (kHz)>: 1 <Ear>: r <Trial Length (samples)>: 2002 <Condition>: Normal
