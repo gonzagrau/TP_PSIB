@@ -1,5 +1,5 @@
 import numpy as np
-import SimpleITK as sitk
+#import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import cv2
 import scipy
