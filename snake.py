@@ -1,5 +1,5 @@
 import numpy as np
-#import SimpleITK as sitk
+import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import cv2
 import scipy
@@ -8,7 +8,7 @@ import scipy.ndimage as snd
 import skimage
 #from skimage import data
 
-path = r"C:\Users\ibajl\Desktop\TP PSIB\TP_PSIB\Dataset for Fetus Framework\Dataset for Fetus Framework\External Test Set\Standard\1372.png"
+path = r"C:\Users\Usuario\Desktop\TPPSIB\TP_PSIB\Dataset for Fetus Framework\Dataset for Fetus Framework\External Test Set\Standard\1372.png"
 
 """ img = sitk.ReadImage(path)
 ima = sitk.GetArrayFromImage(img)
@@ -23,8 +23,9 @@ plt.show()
 #invierto la imagen 
 imagen = cv2.imread(path, 0)
 umbral, imagen_binaria = cv2.threshold(imagen, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU) #otsu
+
 imagen_binaria_inv = (imagen_binaria==0)
-imagen_binaria_inv = imagen_binaria_inv.astype("uint8")
+imagen_binaria_inv = imagen_binaria_inv.astype("uint8") 
 
 
 
