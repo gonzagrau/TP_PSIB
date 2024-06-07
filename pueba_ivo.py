@@ -4,18 +4,25 @@ import pandas as pd
 from dat_hea_reader import *
 from eeg_avg import *
 import scipy.signal as sig
-
-#lista de las aplitudes que van de 10 a 100
-list = []
-for i in range(10,105,5):
-    list.append(i)
-amplitudes = np.array(list)  
+import os
 
 lista_paths=[]
-for i in amplitudes:
-    lista_paths.append(f"C:\\Users\\Usuario\\Desktop\\evoked-auditory-responses-in-normals-1.0.0\\raw\\N1\\N1_evoked_raw_{i}_F1_R1")
-   
+directory = os.fsencode('base_de_datos_Prueba')
 
-#path_realizacion = r'datos_ejemplo_señales\N1_evoked_raw_100_F1_R1'
-fs, trials, comments = read_trials(r'datos_ejemplo_señales\N1_evoked_raw_100_F1_R1')
+for file in os.listdir(directory):
+    filename = os.fsdecode(file)
+    if filename.endswith(".dat"):
+        # Join the bytes path of the directory with the string filename
+        filepath = os.path.join(directory, os.fsencode(filename))
+        # Decode the filepath for printing
+        name = os.fsdecode(filepath)
+        lista_paths.append(name.strip('.dat'))
 
+for file in lista_paths:
+    try:
+        fs, trials, comments = read_trials(file)
+    except ValueError:
+        print(f"error con el archivo {file}")
+        break
+else:
+    print('todo ok')
