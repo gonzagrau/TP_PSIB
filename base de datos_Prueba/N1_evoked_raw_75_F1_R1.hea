@@ -1,0 +1,4 @@
+n1_evoked_raw_75_F1_R1 2 48000 2074112
+n1_evoked_raw_75_F1_R1.dat 24 3.4106e-09/nV 24
+n1_evoked_raw_75_F1_R1.dat 24 1.3779e-11/V 24
+##<SPL>: 75 <Stim Freq (kHz)>: 1 <Ear>: r <Trial Length (samples)>: 2002 <Condition>: Normal

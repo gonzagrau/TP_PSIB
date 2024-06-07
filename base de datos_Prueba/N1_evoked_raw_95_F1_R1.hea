@@ -1,0 +1,4 @@
+n1_evoked_raw_95_F1_R1 2 48000 2074112
+n1_evoked_raw_95_F1_R1.dat 24 2.0302e-08/nV 24
+n1_evoked_raw_95_F1_R1.dat 24 9.5277e-12/V 24
+##<SPL>: 95 <Stim Freq (kHz)>: 1 <Ear>: r <Trial Length (samples)>: 2002 <Condition>: Normal

@@ -1,0 +1,4 @@
+n1_evoked_raw_40_F1_R1 2 48000 2074112
+n1_evoked_raw_40_F1_R1.dat 24 8.4754e-09/nV 24
+n1_evoked_raw_40_F1_R1.dat 24 3.0747e-12/V 24
+##<SPL>: 40 <Stim Freq (kHz)>: 1 <Ear>: r <Trial Length (samples)>: 2002 <Condition>: Normal
