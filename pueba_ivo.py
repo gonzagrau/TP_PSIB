@@ -20,6 +20,8 @@ for file in os.listdir(directory):
 
 cant_files = len(lista_paths)
 
+
+
 mat_trials_mean = np.zeros((cant_files,2002))
 mat_trials_amp = np.zeros((cant_files,2002))
 mat_trials_var = np.zeros((cant_files,2002))
@@ -38,14 +40,14 @@ for i in range(0,cant_files):
             trials_mean = average_EEG(trials, mode='homogenous') 
             mat_trials_mean[i] = trials_mean
 
-            trials_amp = average_EEG(trials, mode='amp')
-            mat_trials_amp[i] = trials_amp
+            #trials_amp = average_EEG(trials, mode='amp')
+            #mat_trials_amp[i] = trials_amp
 
-            trials_var = average_EEG(trials, mode='var')
-            mat_trials_var[i] = trials_var
+            #trials_var = average_EEG(trials, mode='var')
+            #mat_trials_var[i] = trials_var
 
-            trials_both = average_EEG(trials, mode='both')
-            mat_trials_both[i] = trials_both
+            #trials_both = average_EEG(trials, mode='both')
+            #mat_trials_both[i] = trials_both
 
 
         except ValueError:
@@ -54,9 +56,18 @@ for i in range(0,cant_files):
     else:
         print('todo ok')
 
-df = pd.DataFrame({'t':t, 'mean':trials_mean, 'amp':trials_amp, 'var':trials_var, 'both':trials_both})
-df.to_csv("N1_evoked_raw_100_F1_R1.csv")
-df.head(10)
 
-df = pd.DataFrame({'t':t, 'mean':trials_mean, 'amp':trials_amp, 'var':trials_var, 'both':trials_both})
-'1' '2' '3' '4' '5' '6' '7' '8' '9' '10' '11' '12' '13' 14 15 16 17 18 19
+
+
+# Defino los headers de filas
+row_headers = np.array([["100"],["10"], ["15"], ["20"],["25"], ["30"], ["35"],["40"], ["45"], ["50"], ["55"], ["60"],["65"], ["70"], ["75"],["80"], ["85"], ["90"],["95"]])
+
+# Concateno los headers 
+data_con_header = np.hstack((row_headers, mat_trials_mean.astype(str)))
+
+# Save to CSV
+np.savetxt("preueba_con_row_headers.csv", data_con_header, delimiter=";", fmt='%s')
+
+
+print("fin")
+
