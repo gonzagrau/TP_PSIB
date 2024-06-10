@@ -40,8 +40,10 @@ for file in lista_paths:
         tr_len = comments['Trial Length (samples)']
         t = np.linspace(0, tr_len/fs, tr_len)*1000 # convert to ms
 
-        trials_mean = average_EEG(trials, mode='homogenous') 
-        print(f"la cantidad de nans en el file {file} es {np.sum(np.isnan(trials_mean))}")
+        #para saver si los archivos tienen bien los datos
+
+        """ trials_mean = average_EEG(trials, mode='homogenous') 
+        print(f"la cantidad de nans en el file {file} es {np.sum(np.isnan(trials_mean))}") """
         
         
         mat_trials_mean[i,:] = trials_mean
