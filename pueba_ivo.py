@@ -46,6 +46,7 @@ for file in lista_paths:
         print(f"la cantidad de nans en el file {file} es {np.sum(np.isnan(trials_mean))}") """
         
         
+        trials_mean = average_EEG(trials, mode='homogenous') 
         mat_trials_mean[i,:] = trials_mean
 
         trials_amp = average_EEG(trials, mode='amp')
