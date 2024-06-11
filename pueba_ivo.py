@@ -46,7 +46,7 @@ for file in lista_paths:
         print(f"la cantidad de nans en el file {file} es {np.sum(np.isnan(trials_mean))}") """
         
         
-        mat_trials_mean[i,:] = trials_mean
+        mat_trials_mean[i,:] = mat_trials_mean
 
         trials_amp = average_EEG(trials, mode='amp')
         mat_trials_amp[i,:] = trials_amp
@@ -78,6 +78,9 @@ data_con_header_amp = np.hstack((row_headers, mat_trials_amp))
 data_con_header_var = np.hstack((row_headers, mat_trials_var))
 data_con_header_both = np.hstack((row_headers, mat_trials_both))
 
+
+for data in [data_con_header_amp, data_con_header_homo, data_con_header_var, data_con_header_both]:
+    data = data[data[:, 0].argsort()]
 
 # mando a CSV
 #IMPORTANTE el separador esta en ; y esta con 2 decimales en float el tipo de dato
