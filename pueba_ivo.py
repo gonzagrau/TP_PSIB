@@ -91,3 +91,6 @@ np.savetxt("promedios_both.csv", data_con_header_both, delimiter=";", fmt='%0.2f
 
 
 
+
+
+
