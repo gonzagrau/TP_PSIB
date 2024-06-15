@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+from matplotlib.patches import Ellipse
 import cv2
-from typing import Self
+from typing import Self, Tuple
 
 class My_Image(np.ndarray):
     def __new__(cls, input_val: np.ndarray | str):
@@ -319,6 +319,99 @@ class My_Image(np.ndarray):
         # define the transformation, and apply it
         hist_eq = np.round(((hist_cdf - cdf_min)/(M*N - cdf_min))*(L - 1))
         return My_Image(hist_eq[self])
+
+
+    def fit_ellipse(self) -> Ellipse:
+        """
+        Fits an ellips to a binary image
+        """
+        if len(np.unique(self)) > 2:
+            raise ValueError('Image is not binary')
+
+        # Perform least squares to find ellipse polynomial coefficients
+        Y, X = self.nonzero()
+        A = np.array([X ** 2, X * Y, Y ** 2, X, Y]).T
+        b = np.ones_like(X)
+        p = np.linalg.lstsq(A, b)[0].squeeze()
+
+        # Convert to the canonical form
+        A = p[0]
+        B = p[1]
+        C = p[2]
+        D = p[3]
+        E = p[4]
+        F = -1
+
+        Q = 64 * ((F * (4 * A * C - B ** 2) - A * E ** 2 + B * D * E - C * D ** 2) / (4 * A * C - B ** 2) ** 2)
+        S = (1 / 4) * np.sqrt(np.abs(Q) * np.sqrt(B ** 2 + (A - C) ** 2))
+        R_max = (1 / 8) * np.sqrt(2 * np.abs(Q) * np.sqrt(B ** 2 + (A - C) ** 2) - 2 * Q * (A + C))
+        R_min = np.sqrt(R_max ** 2 - S ** 2)
+        X_c = (B * E - 2 * C * D) / (4 * A * C - B ** 2)
+        Y_c = (B * D - 2 * A * E) / (4 * A * C - B ** 2)
+
+        qa = Q * A
+        qc = Q * C
+        qb = Q * B
+
+        if qa - qc == 0 and qb == 0:
+            angle = 0
+
+        elif qa - qc == 0 and qb > 0:
+            angle = np.pi / 4
+
+        elif qa - qc == 0 and qb < 0:
+            angle = 3 * np.pi / 4
+
+        elif qa - qc > 0:
+            if qb >= 0:
+                angle = 0.5 * np.arctan(B / (A - C))
+            else:
+                angle = 0.5 * np.arctan(B / (A - C)) + np.pi
+
+        else: # elif qa - qc < 0:
+            angle = 0.4 * np.arctan(B / (A - C)) + 0.5 * np.pi
+
+        ellipse_patch =Ellipse(xy=(X_c, Y_c),
+                               width=2 * R_max,
+                               height=2 * R_min,
+                               angle=180 * angle / np.pi,
+                               linestyle='-',
+                               edgecolor='cyan',
+                               fill=False)
+
+        return ellipse_patch
+
+
+    def plot_with_ellipse(self, ellipse_patch: Ellipse, c: float = 0.1719077568134172) -> None:
+        """
+        Plots the image alongside a fitted ellipse
+
+        arg c: float indicating pixel resolution in [px/mm]
+        """
+
+        center = ellipse_patch.center
+        R_min, R_max = ellipse_patch.height / 2, ellipse_patch.width / 2
+        angle = ellipse_patch.angle
+        offset_point = np.array([R_min * np.cos(angle), R_min * np.sin(angle)])
+        TN_topmark = np.floor(center + offset_point)
+        TN_botmark = np.floor(center - offset_point)
+        TN_meas = np.linalg.norm(TN_topmark - TN_botmark)
+        #
+        fig, ax = plt.subplots(figsize=(10, 10))
+        ax.imshow(self, vmin=0, vmax=255, cmap='gray')
+        ax.add_patch(ellipse_patch)
+        ax.plot(center[0], center[1], 'ro', markersize=1)
+        ax.plot([TN_topmark[0], TN_botmark[0]], [TN_topmark[1], TN_botmark[1]],
+                linestyle='--',
+                color='y',
+                marker='+',
+                markersize=6,
+                linewidth=0.5,
+                label=f"TN={TN_meas / c:.2f} [mm]")
+
+        plt.legend(loc='upper left', fontsize='big', prop={'weight': 'bold'})
+        plt.axis('off')
+        plt.show()
 
 
 def main():

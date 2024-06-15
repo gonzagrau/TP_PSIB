@@ -14,7 +14,7 @@ fs = 48000
 #welch
 
 nper = int(len(spl_100)//25)
-f, Pxx_den = welch(spl_100, fs, noverlap=nper/2  , nperseg=nper)
+f, Pxx_den = welch(spl_100, fs, noverlap=nper//2  , nperseg=nper)
 plt.figure(figsize = (9.7,4))
 plt.plot(f, Pxx_den)
 plt.xlabel('frequency [Hz]')
