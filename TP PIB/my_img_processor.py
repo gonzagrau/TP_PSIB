@@ -21,6 +21,7 @@ class My_Image(np.ndarray):
         obj = np.asarray(input_array).view(cls)
         return obj
 
+
     def get_hist(self,
                  vmin: int=0,
                  vmax: int=255,
@@ -50,6 +51,7 @@ class My_Image(np.ndarray):
 
         return bins, hist   
 
+
     def zero_pad(self, d: int) -> Self:
         """
         d: size of kernel
@@ -61,6 +63,7 @@ class My_Image(np.ndarray):
         img_pad = np.zeros((N + 2*pad_num, M + 2*pad_num))
         img_pad[pad_num:-pad_num, pad_num:-pad_num] = self
         return My_Image(img_pad)  
+
 
     def expand_pad(self, d: int) -> Self:
         """
@@ -96,6 +99,7 @@ class My_Image(np.ndarray):
             east += 1
 
         return My_Image(img_pad)
+
 
     def filter_w_kernel(self: np.ndarray,
                    kernel: np.ndarray, *,
@@ -142,6 +146,7 @@ class My_Image(np.ndarray):
 
         return My_Image(filtered_img)
     
+
     def median_filter(self, window_size: float, pad_mode: str='zero') -> Self:
         """
         window_size: dimension of the window to convolve
@@ -168,6 +173,7 @@ class My_Image(np.ndarray):
                 filtered_img[i, j] = np.median(window)
 
         return My_Image(filtered_img)
+
 
     def canny_filter(self, 
                      t1: int, 
@@ -301,6 +307,7 @@ class My_Image(np.ndarray):
 
         return My_Image(histeresis_img)
 
+
     def equalize_hist(self) -> Self:
         """
         Applies the histograme equalizing algorithm
@@ -391,8 +398,8 @@ class My_Image(np.ndarray):
 
         center = ellipse_patch.center
         R_min, R_max = ellipse_patch.height / 2, ellipse_patch.width / 2
-        angle = ellipse_patch.angle
-        offset_point = np.array([R_min * np.cos(angle), R_min * np.sin(angle)])
+        angle = np.pi*ellipse_patch.angle/180
+        offset_point = np.array([ -R_min * np.sin(angle), R_min * np.cos(angle)])
         TN_topmark = np.floor(center + offset_point)
         TN_botmark = np.floor(center - offset_point)
         TN_meas = np.linalg.norm(TN_topmark - TN_botmark)
@@ -414,8 +421,51 @@ class My_Image(np.ndarray):
         plt.show()
 
 
+    def region_growing(self, 
+                       seed: list | np.ndarray, 
+                       thresh: float=10., 
+                       max_dist: float=100.0):
+        """
+        Realiza el algoritmo de crecimiento de regiones limitado a una distancia máxima desde la semilla.
+        """
+        #Inicializar la imagen de salida y una lista de píxeles por procesar
+        height, width = self.shape
+        segmented_img = np.zeros((height, width), np.uint8)
+        segmented_img = My_Image(segmented_img)
+        segmented_img[seed[1], seed[0]] = 255
+        pixel_list = [seed]
+
+        #Definir los movimientos posibles 
+        moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+        while pixel_list:
+            x, y = pixel_list.pop(0)
+            for dx, dy in moves:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < width and 0 <= ny < height:
+                    if segmented_img[ny, nx] == 0 and abs(int(self[ny, nx]) - int(self[y, x])) <= thresh:
+                        dist = np.sqrt((nx - seed[0])**2 + (ny - seed[1])**2)
+                        if max_dist is None or dist <= max_dist:
+                            segmented_img[ny, nx] = 255
+                            pixel_list.append((nx, ny))
+
+        return segmented_img
+    
+
+    def binarizar_otsu(self):
+        """
+        Uses the cv2 module to apply otsu binarization
+        """
+        if len(self.shape) == 3:
+            imagen_gris = cv2.cvtColor(self, cv2.COLOR_BGR2GRAY)
+        else:
+            imagen_gris = self
+        _, imagen_binaria = cv2.threshold(imagen_gris, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        return My_Image(imagen_binaria)
+
+
 def main():
-    imagen1 = My_Image('img25.png')
+    imagen1 = My_Image(r'Dataset for Fetus Framework\Dataset for Fetus Framework\External Test Set\Standard\1383.png')
     bins, hist_orig = imagen1.get_hist(plot=False)
     cdf_orig = hist_orig.cumsum()
     img_eq = imagen1.equalize_hist()
@@ -445,4 +495,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    pass
+    #main()
