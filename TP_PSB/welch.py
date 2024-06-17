@@ -6,38 +6,58 @@ from dat_hea_reader import *
 from eeg_avg import *
 import scipy.signal as sig
 import os
-
-
-df = pd.read_csv('TP_PSB\data_avg_N1\promedios_homo.csv')
-
-spl_100 = df['100']
-print(spl_100)
+#fs de las realizaciones
 fs = 48000
+lista_paths=[]
+directory = os.fsencode('TP_PSB\data_avg_N1')
+for file in os.listdir(directory):
+        filename = os.fsdecode(file)        
+        filepath = os.path.join(directory, os.fsencode(filename))
+        name = os.fsdecode(filepath)
+        lista_paths.append(name)
+        
+#genero una funcion que dado un path a un csv me devuelve la suma del welch para cada header
+def suma_welch(path,
+               fs: int = 48000):
+    #cargo la data
+    df = pd.read_csv(path)
+    headers = df.columns.values.tolist()
+    n = len(headers)
 
-""" # Calcular el periodograma
-periodograma = np.abs(np.fft.fft(st1))**2 / len(st1)
+    #genero una matriz para almacenar la data
 
-# Calcular la frecuencia correspondiente a cada componente del periodograma
-w=fftfreq(len(periodograma))*N
+    PSD_sum_mat = np.zeros((n,2))
 
-# Graficar el periodograma
-plt.figure(figsize=(10, 5))
-plt.plot(w[:n // 2], periodograma[:n // 2])
-plt.title('Periodograma')
-plt.xlabel('Frecuencia (Hz)')
-plt.ylabel('Densidad Espectral de Potencia')
-plt.grid(True)
-plt.show() """
+    for  i in range(n):
+        #  Welch's 
+        spl = df[headers[i]]
+        nper = int(len(spl) // 5)
+        ## se decide hacer 5 ventanas e manera empirica ya que se realizaron varios tests y es el que mas suavisa al periodograma sin tener errores por promediacion 
+        ##el overlap es el clasico del 50% ya que se considera que es el que da mejores resultados
+        f, Pxx_den = welch(spl, fs, noverlap=nper//2, nperseg=nper)
 
 
-#welch
+        suma_PSD = sum(Pxx_den)
+        PSD_sum_mat[i,0] = int(headers[i])
+        PSD_sum_mat[i,1] = suma_PSD
 
-nper = int(len(spl_100)//25)
-f, Pxx_den = welch(spl_100, fs, noverlap=nper//2  , nperseg=nper)
-plt.figure(figsize = (9.7,4))
-plt.plot(f, Pxx_den)
-plt.xlabel('frequency [Hz]')
-plt.ylabel('PSD [uV^2/Hz]')
-plt.title('Welch')
-plt.grid()
-plt.show()
+    #normalizo por el valor mas alto
+    max_per_col = np.max(PSD_sum_mat,axis=0)
+    max = max_per_col[1]
+    for i in range(n):  
+        PSD_sum_mat[i,1] = PSD_sum_mat[i,1]/max
+
+    return PSD_sum_mat
+
+# calculo la suma del welch
+PSD_sum_mat_amp= suma_welch(lista_paths[0])
+PSD_sum_mat_both= suma_welch(lista_paths[1])
+PSD_sum_mat_homo= suma_welch(lista_paths[2])
+PSD_sum_mat_var= suma_welch(lista_paths[3])
+
+
+
+
+           
+
+
