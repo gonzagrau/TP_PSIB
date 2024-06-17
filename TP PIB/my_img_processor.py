@@ -418,7 +418,7 @@ class My_Image(np.ndarray):
         TN_botmark = np.floor(center - offset_point)
         TN_meas = np.linalg.norm(TN_topmark - TN_botmark)
         #
-        fig, ax = plt.subplots(figsize=(10, 10))
+        fig, ax = plt.subplots()# figsize=(10, 10))
         ax.imshow(self, vmin=0, vmax=255, cmap='gray')
         ax.add_patch(ellipse_patch)
         ax.plot(center[0], center[1], 'ro', markersize=1)
