@@ -2,7 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import cv2
-from typing import Self, Tuple
+from typing import Self, Tuple, List
+from scipy.ndimage import label
+
 
 class My_Image(np.ndarray):
     def __new__(cls, input_val: np.ndarray | str):
@@ -306,7 +308,19 @@ class My_Image(np.ndarray):
                 histeresis_img[i - 1 : i + 1 + 1, j - 1 : j + 1 + 1] = window
 
         return My_Image(histeresis_img)
+    
 
+    def binarizar_otsu(self):
+        """
+        Uses the cv2 module to apply otsu binarization
+        """
+        if len(self.shape) == 3:
+            imagen_gris = cv2.cvtColor(self, cv2.COLOR_BGR2GRAY)
+        else:
+            imagen_gris = self
+        _, imagen_binaria = cv2.threshold(imagen_gris, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        return My_Image(imagen_binaria)
+    
 
     def equalize_hist(self) -> Self:
         """
@@ -424,7 +438,7 @@ class My_Image(np.ndarray):
     def region_growing(self, 
                        seed: list | np.ndarray, 
                        thresh: float=10., 
-                       max_dist: float=100.0):
+                       max_dist: float=100.0) -> Self:
         """
         Realiza el algoritmo de crecimiento de regiones limitado a una distancia máxima desde la semilla.
         """
@@ -450,18 +464,66 @@ class My_Image(np.ndarray):
                             pixel_list.append((nx, ny))
 
         return segmented_img
+
+
+    def obtener_coordenadas_puntos_blancos(self) -> np.ndarray:
+        """
+        Encuentras aquellos puntos de la imagen con valor de saturacion
+        """
+        dtype_data = np.iinfo(self.dtype)
+        MIN_VAL, MAX_VAL = dtype_data.min, dtype_data.max
+        coordenadas = np.where(self == MAX_VAL)
+        return coordenadas
     
 
-    def binarizar_otsu(self):
+    def etiquetar_componentes(self) -> Tuple[Self, int]:
         """
-        Uses the cv2 module to apply otsu binarization
+        Aplicamos el método de etiquetado de scipy
         """
-        if len(self.shape) == 3:
-            imagen_gris = cv2.cvtColor(self, cv2.COLOR_BGR2GRAY)
-        else:
-            imagen_gris = self
-        _, imagen_binaria = cv2.threshold(imagen_gris, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        return My_Image(imagen_binaria)
+        dtype_data = np.iinfo(self.dtype)
+        MAX_VAL = dtype_data.max
+        estructura = np.ones((3, 3), dtype=int) 
+        imagen_etiquetada, num_features = label(self, structure=estructura)
+        imagen_etiquetada_tipada = (imagen_etiquetada * (MAX_VAL // num_features)).astype(self.dtype)
+        return My_Image(imagen_etiquetada_tipada), num_features
+    
+
+    def invertir_imagen(self) -> Self:
+        """
+        Devuelve una version invertida en intensidad de la imagen
+        """
+        dtype_data = np.iinfo(self.dtype)
+        MIN_VAL, MAX_VAL = dtype_data.min, dtype_data.max
+        return  MAX_VAL - self
+
+
+    def extraer_area_por_intensidad(self, punto: np.ndarray | Tuple[int, int] | List[int]) -> Self:
+        """
+        Segmenta una seccion de una imagen binarizada de igual intensidad
+
+        Args:
+            punto (np.ndarray | Tuple[int, int] | List[int]): semilla para comenzar a buscar puntos
+
+        Returns:
+            Self: imagen binaria segmentada
+        """
+        intensidad_punto = self[punto[1], punto[0]]
+        mascara = My_Image(np.zeros_like(self, dtype=self.dtype))
+        MAX_VAL = np.iinfo(self.dtype).max
+        puntos_a_revisar = [punto]
+        direcciones = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+        while puntos_a_revisar:
+            x, y = puntos_a_revisar.pop()
+            if x < 0 or y < 0 or x >= self.shape[1] or y >= self.shape[0]:
+                continue
+            if mascara[y, x] == 0 and self[y, x] == intensidad_punto:
+                mascara[y, x] = MAX_VAL
+                for dx, dy in direcciones:
+                    puntos_a_revisar.append((x + dx, y + dy))
+
+        return mascara
+        
+
 
 
 def main():
