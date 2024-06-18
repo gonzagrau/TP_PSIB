@@ -9,7 +9,7 @@ import os
 #fs de las realizaciones
 fs = 48000
 lista_paths=[]
-directory = os.fsencode('TP_PSB\data_avg_N1')
+directory = os.fsencode(r'TP_PSB\data_avg_N1')
 for file in os.listdir(directory):
         filename = os.fsdecode(file)        
         filepath = os.path.join(directory, os.fsencode(filename))
