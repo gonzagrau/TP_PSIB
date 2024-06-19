@@ -43,7 +43,20 @@ def read_trials(filepath: str) -> Tuple[int, np.ndarray, dict]:
     tr_len = comments['Trial Length (samples)']
     sig_len = record.sig_len
     
-    trials = [ABR_raw[i: i+tr_len] for i in range(0, sig_len - tr_len, tr_len)]
+    #funcion previa que no checkea outliers, BORRAR
+    #trials = [ABR_raw[i: i+tr_len] for i in range(0, sig_len - tr_len, tr_len)]
+
+#create an empty list
+    trials = []
+    for i in range(0, sig_len - tr_len, tr_len):
+        #separate a trial 
+        trial = ABR_raw[i:i+tr_len]
+        #check if the trail has some outlier data, if it does the trial is discarted
+        if any(abs(point) > 50000 for point in trial):
+            continue
+        else:
+            trials.append(trial)
+
     trials = np.array(trials)
 
     return fs, trials, comments
