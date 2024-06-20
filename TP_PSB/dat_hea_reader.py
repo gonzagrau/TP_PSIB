@@ -25,7 +25,7 @@ def parse_comments(comments: list[str]) -> dict:
     return parsed_dict
 
 
-def read_trials(filepath: str) -> Tuple[int, np.ndarray, dict]:
+def read_trials(filepath: str, threshold: int=50000) -> Tuple[int, np.ndarray, dict]:
     """
     Reads .dat and .hea files, and the
 
@@ -46,13 +46,13 @@ def read_trials(filepath: str) -> Tuple[int, np.ndarray, dict]:
     #funcion previa que no checkea outliers, BORRAR
     #trials = [ABR_raw[i: i+tr_len] for i in range(0, sig_len - tr_len, tr_len)]
 
-#create an empty list
+    #create an empty list
     trials = []
     for i in range(0, sig_len - tr_len, tr_len):
         #separate a trial 
         trial = ABR_raw[i:i+tr_len]
         #check if the trail has some outlier data, if it does the trial is discarted
-        if any(abs(point) > 50000 for point in trial):
+        if any(abs(point) > threshold for point in trial):
             continue
         else:
             trials.append(trial)
