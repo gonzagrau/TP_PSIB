@@ -18,7 +18,8 @@ for file in os.listdir(directory):
         
 #genero una funcion que dado un path a un csv me devuelve la suma del welch para cada header
 def suma_welch(path,
-               fs: int = 48000):
+               fs: int = 48000,
+               plot: bool = False):
     #cargo la data
     df = pd.read_csv(path)
     headers = df.columns.values.tolist()
@@ -46,8 +47,13 @@ def suma_welch(path,
     max = max_per_col[1]
     for i in range(n):  
         PSD_sum_mat[i,1] = PSD_sum_mat[i,1]/max
+    
+    #Grafica
+    if plot == True:
+         graf_intensidad_vs_welch_suma(PSD_sum_mat)
 
     return PSD_sum_mat
+
 def graf_intensidad_vs_welch_suma(mat: np.array,):
 
     # extraigo las intencidades y las sumas

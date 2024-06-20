@@ -56,7 +56,10 @@ def read_trials(filepath: str) -> Tuple[int, np.ndarray, dict]:
             continue
         else:
             trials.append(trial)
-
+            
+    if not trials:
+            raise ValueError("Todos los trials estan fuera del limite, ende Trials esta vacia")
+    
     trials = np.array(trials)
 
     return fs, trials, comments
