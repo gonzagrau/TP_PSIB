@@ -15,6 +15,7 @@ def main():
     lista_SPL = []
     spl_pattern = re.compile(r'(raw_)(\d*)(_F)')
 
+    print('buscando archivos')
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
         if filename.endswith(".dat"):
@@ -40,6 +41,7 @@ def main():
     mat_trials_both = np.zeros((cant_files,tr_len),dtype=trials.dtype)
 
     #se recorren todos los archivos haciendo el priomedio de cada uno y llenando las matrices 
+    print('Promediando...')
     for i, file in enumerate(lista_paths):
         try:
             fs, trials, comments = read_trials(file)
@@ -67,13 +69,15 @@ def main():
     output_dir = 'data_avg_N1'
     row_names = np.array(lista_SPL)
     
+    print('Guardando a csv...')
     for data, fname in zip([mat_trials_mean, mat_trials_amp, mat_trials_var, mat_trials_both], filenames):
-        sorted_indices = row_names.argsort()
+        sorted_indices = row_names.argsort()[::-1]
         sorted_data = data[sorted_indices]
         df = pd.DataFrame(sorted_data.T)
         df.to_csv(rf"data_avg_N1/promedios_{fname}.csv", index=False, header=row_names[sorted_indices])
 
-
+    print('Listorti, José María.')
+    
 if __name__ == '__main__':
     main()
 

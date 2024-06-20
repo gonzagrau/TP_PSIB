@@ -9,7 +9,7 @@ import os
 #fs de las realizaciones
 fs = 48000
 lista_paths=[]
-directory = os.fsencode('TP_PSB\data_avg_N1')
+directory = os.fsencode('data_avg_N1')
 for file in os.listdir(directory):
         filename = os.fsdecode(file)        
         filepath = os.path.join(directory, os.fsencode(filename))
@@ -60,6 +60,7 @@ def graf_intensidad_vs_welch_suma(mat: np.array,):
     intensity = mat[:, 0]
     suma = mat[:, 1]
 
+    print(intensity)
     # Plot
     plt.figure(figsize=(8, 6))  # Optional: Adjust the figure size
     plt.plot(intensity, suma, marker='o', linestyle='-', color='b', label='sumas de welch vs Intensidad')
@@ -86,7 +87,7 @@ PSD_sum_mat_var= suma_welch(lista_paths[3])
 
 #almaceno las matrices 
 matrices_suma = {"amp":PSD_sum_mat_amp,"both":PSD_sum_mat_both,"homo":PSD_sum_mat_homo,"var":PSD_sum_mat_var}
-for value in matrices_suma.values:
+for value in matrices_suma.values():
      graf_intensidad_vs_welch_suma(value)
 
 
