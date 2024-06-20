@@ -15,7 +15,7 @@ def main():
     lista_SPL = []
     spl_pattern = re.compile(r'(raw_)(\d*)(_F)')
 
-    print('buscando archivos')
+    print('Buscando archivos')
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
         if filename.endswith(".dat"):
@@ -77,7 +77,7 @@ def main():
         df.to_csv(rf"data_avg_N1/promedios_{fname}.csv", index=False, header=row_names[sorted_indices])
 
     print('Listorti, José María.')
-    
+
 if __name__ == '__main__':
     main()
 

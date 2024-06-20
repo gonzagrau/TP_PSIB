@@ -54,7 +54,7 @@ def suma_welch(path,
 
     return PSD_sum_mat
 
-def graf_intensidad_vs_welch_suma(mat: np.array,):
+def graf_intensidad_vs_welch_suma(mat: np.array, metodo: str):
 
     # extraigo las intencidades y las sumas
     intensity = mat[:, 0]
@@ -68,7 +68,7 @@ def graf_intensidad_vs_welch_suma(mat: np.array,):
     # Add labels and title
     plt.xlabel('Intensidad')
     plt.ylabel('sumas de Welch')
-    plt.title('sumas de welch vs Intensidad')
+    plt.title(f"Promediado {metodo}")
 
     # Add grid
     plt.grid(True)
@@ -87,8 +87,8 @@ PSD_sum_mat_var= suma_welch(lista_paths[3])
 
 #almaceno las matrices 
 matrices_suma = {"amp":PSD_sum_mat_amp,"both":PSD_sum_mat_both,"homo":PSD_sum_mat_homo,"var":PSD_sum_mat_var}
-for value in matrices_suma.values():
-     graf_intensidad_vs_welch_suma(value)
+for key, value in matrices_suma.items():
+     graf_intensidad_vs_welch_suma(value, key)
 
 
 

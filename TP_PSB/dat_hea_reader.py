@@ -31,6 +31,7 @@ def read_trials(filepath: str, threshold: int=50000) -> Tuple[int, np.ndarray, d
 
     Args:
         filepath (str): filepath WITHOUT the extension
+        threshold (int): voltage threshold in nV to discard measuring artifacts
 
     Returns:
         Tuple[int, np.ndarray, dict]: sample frequency, trials matrix, comments dict
@@ -42,16 +43,13 @@ def read_trials(filepath: str, threshold: int=50000) -> Tuple[int, np.ndarray, d
     comments = parse_comments(record.comments)
     tr_len = comments['Trial Length (samples)']
     sig_len = record.sig_len
-    
-    #funcion previa que no checkea outliers, BORRAR
-    #trials = [ABR_raw[i: i+tr_len] for i in range(0, sig_len - tr_len, tr_len)]
 
     #create an empty list
     trials = []
     for i in range(0, sig_len - tr_len, tr_len):
         #separate a trial 
         trial = ABR_raw[i:i+tr_len]
-        #check if the trail has some outlier data, if it does the trial is discarted
+        #check if the trial has some outlier data, if it does the trial is discarted
         if any(abs(point) > threshold for point in trial):
             continue
         else:
