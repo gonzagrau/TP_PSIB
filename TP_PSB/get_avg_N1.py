@@ -74,7 +74,7 @@ def main():
         sorted_indices = row_names.argsort()[::-1]
         sorted_data = data[sorted_indices]
         df = pd.DataFrame(sorted_data.T)
-        df.to_csv(rf"data_avg_N1/promedios_{fname}.csv", index=False, header=row_names[sorted_indices])
+        df.to_csv(rf"{output_dir}/promedios_{fname}.csv", index=False, header=row_names[sorted_indices])
 
     print('Listorti, José María.')
 
