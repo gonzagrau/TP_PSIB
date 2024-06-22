@@ -117,7 +117,7 @@ def main():
             first_avg = df['100']
 
             # Find first peak
-            idx_peak_wave5, peak_amp = find_index_peak(t, first_avg, 5, 10, take_abs=False, plot=False)
+            idx_peak_wave5, peak_amp = find_index_peak(t, first_avg, 5, 10, take_abs=False, plot=True)
             print(f"{idx_peak_wave5=}")
 
             # get remaining signals and trace
@@ -125,7 +125,8 @@ def main():
             mat_to_trace  = df[check_columns].to_numpy()
 
             # trace
-            peak_indeces, peak_amps = trace_peak(t, mat_to_trace, idx_peak_wave5, plot=True)
+            peak_indeces, peak_amps = trace_peak(t, mat_to_trace, idx_peak_wave5, 
+                                                 left_interval=1, right_interval=2, plot=True)
 
             # merga data and plot
             peak_amps = np.array([peak_amp] + peak_amps)
@@ -133,7 +134,6 @@ def main():
             plt.plot(df.columns, peak_amps)
             plt.title(f"Loudness growth using {name}")
             plt.show()
-            input('Enter to continue...')
 
 
 if __name__ == '__main__':
