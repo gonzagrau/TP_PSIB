@@ -118,7 +118,7 @@ def exponential_regression(X: np.ndarray, Y: np.ndarray) -> Tuple[np.ndarray, np
     """
     # exponential regression
     mat_LS = np.column_stack((X, np.ones_like(X)))
-    theta = np.linalg.lstsq(mat_LS, np.log(Y))[0].squeeze()
+    theta = np.linalg.lstsq(mat_LS, np.log(Y), rcond=None)[0].squeeze()
     print(theta)
     reg_LG = np.exp(theta[0]*X + theta[1])
     return theta, reg_LG
@@ -152,7 +152,7 @@ def waveV_LG_estimation(df: pd.DataFrame,
 
     # trace
     peak_indeces, peak_amps = trace_peak(t, mat_to_trace, idx_peak_wave5, 
-                                            left_interval=0.5, right_interval=2.5, plot=False)
+                                            left_interval=0.5, right_interval=2.5, plot=True)
 
     # merge with the data from the original signal, and sort
     columns_arr = np.array([int(col) for col in df.columns])
@@ -172,6 +172,8 @@ def waveV_LG_estimation(df: pd.DataFrame,
     fig, ax = plt.subplots()
     ax.plot(columns_arr, est_LG, label='LG')
     ax.plot(columns_arr, reg_LG, label='Reg. exponencial')
+    ax.set_xlabel('SPL [dB]')
+    ax.set_ylabel('LG [uu. aa.]')
     ax.set_xticks(columns_arr)
     ax.set_title(f"Percepción estimada con promediado {prom_type}")
     plt.legend()
