@@ -46,7 +46,7 @@ def suma_welch_peri(path,
         PSD_sum_mat_Periodograma[i,0] = int(headers[i])
         PSD_sum_mat_Periodograma[i,1] = suma_PSD_Peri
         
-
+    
     #normalizo por el valor mas alto
     max_per_col_welch = np.max(PSD_sum_mat_welch,axis=0)
     max_welch = max_per_col_welch[1]
@@ -58,9 +58,7 @@ def suma_welch_peri(path,
         PSD_sum_mat_welch[i,1] = PSD_sum_mat_welch[i,1]/max_welch
         PSD_sum_mat_Periodograma[i,1] = PSD_sum_mat_Periodograma[i,1]/max_peri
     
-    #Grafica
-    """ if plot:
-         graf_intensidad_vs_welch_suma(PSD_sum_mat_welch) """
+    
 
     return PSD_sum_mat_welch,PSD_sum_mat_Periodograma
 
@@ -69,7 +67,9 @@ def graf_intensidad_vs_welch_suma(mat: np.array, metodo: str,modo: str = 'welch'
     
     # extraigo las intencidades y las sumas
     intensity = mat[:, 0]
+    
     suma = mat[:, 1]
+    
 
     # Plot
     plt.figure(figsize=(8, 6))  # Optional: Adjust the figure size
@@ -117,8 +117,8 @@ def main():
     #almaceno las matrices 
     matrices_suma = {"amp":PSD_sum_mat_amp,"both":PSD_sum_mat_both,"homo":PSD_sum_mat_homo,"var":PSD_sum_mat_var}
     for key, value in matrices_suma.items():
-        graf_intensidad_vs_welch_suma(value[0], key,modo = 'welch' )
-        graf_intensidad_vs_welch_suma(value[1], key,modo = 'periodogrma' )
+        graf_intensidad_vs_welch_suma(value[0], key,modo = 'welch')
+        graf_intensidad_vs_welch_suma(value[1], key,modo = 'periodogrma') 
 
 
 
