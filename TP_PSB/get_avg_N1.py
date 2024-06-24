@@ -24,8 +24,7 @@ def main():
             # Decode the filepath for printing
             name = os.fsdecode(filepath)
             lista_paths.append(name[:-4]) # Remove extension
-            pattern = re.compile(r'(raw_)(\d*)(_F)')
-            spl = re.search(pattern, name).group(2)
+            spl = re.search(spl_pattern, name).group(2)
             lista_SPL.append(int(spl))
     
     cant_files = len(lista_paths)
