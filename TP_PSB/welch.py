@@ -68,7 +68,7 @@ def graf_intensidad_vs_welch_suma(mat: np.array, metodo: str,modo: str = 'welch'
     # extraigo las intencidades y las sumas
     intensity = mat[:, 0]
     
-    suma = np.flip(mat[:, 1])
+    suma = (mat[:, 1])
     
 
     # Plot
