@@ -6,11 +6,13 @@ from dat_hea_reader import *
 from eeg_avg import *
 import scipy.signal as sig
 import os
+from waveVamp import exponential_regression
+
 
 #genero una funcion que dado un path a un csv me devuelve la suma del welch para cada header
 def suma_welch_peri(path,
-               fs: int = 48000,
-               plot: bool = False):
+                    fs: int = 48000,
+                    plot: bool = False):
     #cargo la data
     df = pd.read_csv(path)
     headers = df.columns.values.tolist()
@@ -34,7 +36,7 @@ def suma_welch_peri(path,
         suma_PSD = sum(Pxx_den)
         #se almacenan los datos
         PSD_sum_mat_welch[i,0] = int(headers[i])
-        PSD_sum_mat_welch[i,1] = suma_PSD
+        PSD_sum_mat_welch[i,1] = 1/suma_PSD
     
 
         # Periodograma
@@ -45,7 +47,7 @@ def suma_welch_peri(path,
         suma_PSD_Peri = sum(periodograma)
         #se almacenan los datos
         PSD_sum_mat_Periodograma[i,0] = int(headers[i])
-        PSD_sum_mat_Periodograma[i,1] = suma_PSD_Peri
+        PSD_sum_mat_Periodograma[i,1] = 1/suma_PSD_Peri
         
     
     #normalizo por el valor mas alto
@@ -78,7 +80,8 @@ def graf_intensidad_vs_welch_suma(mat: np.array, metodo: str,modo: str = 'welch'
         plt.plot(intensity, suma, marker='o', linestyle='-', color='b', label='sumas de welch vs Intensidad')
     else:
         plt.plot(intensity, suma, marker='o', linestyle='-', color='r', label='sumas del Periodograma vs Intensidad')
-
+    _, LG_exp = exponential_regression(intensity, suma)
+    plt.plot(intensity, LG_exp, 'g--', label='Regresión exponencial')
 
     # Add labels and title
     plt.xlabel('Intensidad')
