@@ -35,6 +35,7 @@ def suma_welch_peri(path,
         #se almacenan los datos
         PSD_sum_mat_welch[i,0] = int(headers[i])
         PSD_sum_mat_welch[i,1] = suma_PSD
+    
 
         # Periodograma
         periodograma = np.abs(np.fft.fft(spl))**2 /N
@@ -125,65 +126,5 @@ def main():
 if __name__ == '__main__':
     main()
 
-""" lista_paths=[]
-directory = os.fsencode('data_avg_N1')
-for file in os.listdir(directory):
-        filename = os.fsdecode(file)        
-        filepath = os.path.join(directory, os.fsencode(filename))
-        name = os.fsdecode(filepath)
-        lista_paths.append(name) """
-        
-
-
-
-
-
-"""
-spl_100 = df['100']
-fs = 48000
-N = len(spl_100)
-
-# Periodograma
-periodograma = np.abs(np.fft.fft(spl_100))**2 /N
-# Frecs del periodograma
-w = np.fft.fftfreq(N, 1/fs)
-#  Welch's
-nper = int(len(spl_100) // 5)
-## se decide hacer 5 ventanas e manera empirica ya que se realizaron varios tests y es el que mas suavisa al periodograma sin tener errores por promediacion
-##el overlap es el clasico del 50% ya que se considera que es el que da mejores resultados
-f, Pxx_den = welch(spl_100, fs, noverlap=nper//2, nperseg=nper) """
-
-""" # subplots
-fig, axs = plt.subplots(1, 2, figsize=(15, 5))
-
-# Plot periodograma
-axs[0].set_xlim(0,2000)
-axs[0].plot(w[:N // 2], periodograma[:N // 2])
-##coincide el largo por usar la DTFT FFT
-axs[0].set_title('Periodograma')
-axs[0].set_xlabel('Frecuencia (Hz)')
-axs[0].set_ylabel('Densidad Espectral de Potencia')
-
-axs[0].grid(True)
-
-
-# Plot Welch con 5
-axs[1].set_xlim(0,2000)
-axs[1].plot(f, Pxx_den)
-axs[1].set_title('Welch con 5')
-axs[1].set_xlabel('Frecuencia (Hz)')
-axs[1].set_ylabel('Densidad Espectral de Potencia')
-
-axs[1].grid(True)
-
-# Show
-plt.tight_layout()
-plt.show()
-
-
- """
-
-
-           
 
 
